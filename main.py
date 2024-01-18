@@ -5,6 +5,7 @@ from pygame.transform import scale
 
 pygame.init()
 
+# color variables
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -13,18 +14,29 @@ BLUE = (0, 0, 255)
 BROWN = (139, 69, 19)
 YELLOW = (255, 255, 0)
 
+# screen variables
 SCREENWIDTH = 800
 SCREENHEIGHT = 600
 screen = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
 
+# game variables
 pygame.display.set_caption("Cookie Clicker")
 icon = pygame.image.load('Cookie.png')
 pygame.display.set_icon(icon)
 
+# gamescore variables
 score = 0
 font = pygame.font.SysFont("Ariel", 32)
 
+# Autoclicker variables
+autoclicker_level = 0
+autoclicker_price = 500
+autoclicker_increnent = 1
+autoclicker_rate = 0
+
 shop_button_rect = pygame.Rect(SCREENWIDTH -200, 10, 180, 50)
+shop_multiplier_button_rect = pygame.Rect(SCREENWIDTH // 4 + 10, SCREENHEIGHT // 2 + 10, SCREENWIDTH // 8, SCREENHEIGHT // 8)
+autoclicker_rect = pygame.Rect(SCREENWIDTH // 2 + 80, SCREENHEIGHT // 2 + 10, SCREENWIDTH // 8, SCREENHEIGHT // 8)
 shop_open = False
 multiplier = 1
 cookie = pygame.image.load('Cookie.png')
@@ -39,7 +51,22 @@ running = True
 
 scale = 1
 
+# main game loop
+def handle_autoclicker_upgrade():
+    global score, autoclicker_level, autoclicker_price, autoclicker_rate
+  
+    if score >= autoclicker_price:
+      score -= autoclicker_price
+
+      autoclicker_level += 1
+      autoclicker_price *= 2
+      autoclicker_rate += autoclicker_increnent
+      # Prints a message to inform the player that the upgrade was successful
+    print(f"Autoclicker upgraded to level {autoclicker_level}!")
+
+# while loops
 while running:
+  
   screen.fill(BLACK)
   score_text = font.render(f"Score: {score}", True, WHITE)
   score_rect = score_text.get_rect()
@@ -71,7 +98,30 @@ while running:
   shop_text_rect.centery = shop_button_rect.centery
   screen.blit(shop_text, shop_text_rect)
   if shop_open:
-    shop_bg_rect = pygame.Rect(SCREENWIDTH // 4, SCREENHEIGHT // 2, SCREENHEIGHT // 2)
+    shop_bg_rect = pygame.Rect(SCREENWIDTH // 4, SCREENHEIGHT // 4, 
+                               SCREENWIDTH // 2, SCREENHEIGHT // 2)
     pygame.draw.rect(screen, (128, 128, 128), shop_bg_rect)
+    multiplier_rect = pygame.Rect(SCREENWIDTH // 4 +10, SCREENHEIGHT // 2, +10, SCREENWIDTH // 8)
+    # draw the rectangle on the screen.
+    pygame.draw.rect(screen, BLUE, multiplier_rect)
+
+    # creates a text surface object, on which text is drawn on it.
+    multiplier_text = font.render(f"Multiplier: {multiplier}", True, WHITE)
+    multiplier_textrect = multiplier_text.get_rect()
+    multiplier_textrect.centerx = multiplier_rect.centerx
+    multiplier_textrect.centery = multiplier_rect.centery
+    screen.blit(multiplier_text, multiplier_textrect)
+    autoclicker_rect = pygame.Rect(SCREENWIDTH // 2 +80, SCREENHEIGHT // 2 +10, SCREENWIDTH // 8, SCREENHEIGHT // 8)
+    pygame.draw.rect(screen, YELLOW, autoclicker_rect)
+    autoclicker_text = font.render("Shop", True, BLACK)
+    autoclicker_textrect = autoclicker_text.get_rect()
+    autoclicker_textrect.centerx = autoclicker_rect.centerx
+    autoclicker_textrect.centery = autoclicker_rect.centery
+    screen.blit(autoclicker_text, autoclicker_textrect)
+
+    # creates shop texts and buttons.
     shop_title_text = font.render("Shop", True, WHITE)
+    shop_title_text_rect = shop_title_text.get_rect()
     shop_text_rect = shop_title_text.get_rect()
+    shop_title_text_rect.top = shop_bg_rect.top + 10
+    screen.blit(shop_title_text, shop_title_text_rect)
