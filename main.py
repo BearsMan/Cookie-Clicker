@@ -50,7 +50,9 @@ cookie_rect.centery = SCREENHEIGHT // 2
 running = True
 
 scale = 1
-
+particles = []
+def create_particle():
+    particle = {}
 # main game loop
 def handle_autoclicker_upgrade():
     global score, autoclicker_level, autoclicker_price, autoclicker_rate
@@ -79,7 +81,7 @@ while running:
   temp_rect.centerx = cookie_rect.centerx
   temp_rect.centery = cookie_rect.centery
   screen.blit(temp_surface, temp_rect)
-  pygame.display.flip()
+  
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       running = False
@@ -90,6 +92,11 @@ while running:
         scale = 0.20
       elif shop_button_rect.collidepoint(mouse_x, mouse_y):
         shop_open = not shop_open
+      elif shop_multiplier_button_rect.collidepoint(mouse_x, mouse_y) and shop_open == True:
+          # print("Mulitplier")
+          multiplier += 1
+      elif autoclicker_rect.collidepoint(mouse_x, mouse_y) and shop_open == True:
+        print("Autoclicker")
   scale += (0.25 - scale) * 0.4
   pygame.draw.rect(screen, GREEN, shop_button_rect)
   shop_text = font.render("Shop", True, WHITE)
@@ -101,27 +108,38 @@ while running:
     shop_bg_rect = pygame.Rect(SCREENWIDTH // 4, SCREENHEIGHT // 4, 
                                SCREENWIDTH // 2, SCREENHEIGHT // 2)
     pygame.draw.rect(screen, (128, 128, 128), shop_bg_rect)
-    multiplier_rect = pygame.Rect(SCREENWIDTH // 4 +10, SCREENHEIGHT // 2, +10, SCREENWIDTH // 8)
-    # draw the rectangle on the screen.
-    pygame.draw.rect(screen, BLUE, multiplier_rect)
-
-    # creates a text surface object, on which text is drawn on it.
-    multiplier_text = font.render(f"Multiplier: {multiplier}", True, WHITE)
-    multiplier_textrect = multiplier_text.get_rect()
-    multiplier_textrect.centerx = multiplier_rect.centerx
-    multiplier_textrect.centery = multiplier_rect.centery
-    screen.blit(multiplier_text, multiplier_textrect)
-    autoclicker_rect = pygame.Rect(SCREENWIDTH // 2 +80, SCREENHEIGHT // 2 +10, SCREENWIDTH // 8, SCREENHEIGHT // 8)
-    pygame.draw.rect(screen, YELLOW, autoclicker_rect)
-    autoclicker_text = font.render("Shop", True, BLACK)
-    autoclicker_textrect = autoclicker_text.get_rect()
-    autoclicker_textrect.centerx = autoclicker_rect.centerx
-    autoclicker_textrect.centery = autoclicker_rect.centery
-    screen.blit(autoclicker_text, autoclicker_textrect)
-
-    # creates shop texts and buttons.
+    #Shop button
     shop_title_text = font.render("Shop", True, WHITE)
     shop_title_text_rect = shop_title_text.get_rect()
     shop_text_rect = shop_title_text.get_rect()
     shop_title_text_rect.top = shop_bg_rect.top + 10
     screen.blit(shop_title_text, shop_title_text_rect)
+
+    shop_multiplier_button_rect = pygame.Rect(SCREENWIDTH // 2 + 10, 
+                                  SCREENHEIGHT // 2 + 10, 
+                                  SCREENWIDTH // 4 - 20, 
+                                  SCREENHEIGHT // 4 - 20)
+    # draw the rectangle on the screen.
+    pygame.draw.rect(screen, BLUE, shop_multiplier_button_rect)
+
+  # creates a text surface object, on which text is drawn on it.
+  multiplier_text = font.render(f"Multiplier: {multiplier}", True, WHITE)
+  multiplier_textrect = multiplier_text.get_rect()
+  multiplier_textrect.centerx = shop_multiplier_button_rect.centerx
+  multiplier_textrect.centery = shop_multiplier_button_rect.centery
+  screen.blit(multiplier_text, shop_multiplier_button_rect)
+  
+  autoclicker_rect = pygame.Rect(SCREENWIDTH // 2 +80, SCREENHEIGHT // 2 +10, SCREENWIDTH // 8, SCREENHEIGHT // 8)
+  pygame.draw.rect(screen, YELLOW, autoclicker_rect)
+  autoclicker_text = font.render("Shop", True, BLACK)
+  autoclicker_textrect = autoclicker_text.get_rect()
+  autoclicker_textrect.centerx = autoclicker_rect.centerx
+  autoclicker_textrect.centery = autoclicker_rect.centery
+  screen.blit(autoclicker_text, autoclicker_textrect)
+
+  #We will continue here
+  score += autoclicker_rate
+  pygame.display.flip()
+"""
+   
+    """
