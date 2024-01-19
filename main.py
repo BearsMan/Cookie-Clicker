@@ -1,5 +1,6 @@
 import random
 import pygame
+from pygame.mouse import set_pos
 from pygame.transform import scale
 
 
@@ -53,6 +54,13 @@ scale = 1
 particles = []
 def create_particle():
     particle = {}
+    particle['x'] = cookie_rect.centerx + random.randint(-25, 25)
+    particle['y'] = cookie_rect.centery + random.randint(-25, 25)
+    particle['size'] = random.randint(8, 13)
+    particle['color'] = (255, 255, 255)
+    particle['vx'] = random.randint(-15, 15)
+    particle["vy"] = random.randint(-15, 15)
+    return particle
 # main game loop
 def handle_autoclicker_upgrade():
     global score, autoclicker_level, autoclicker_price, autoclicker_rate
@@ -66,7 +74,7 @@ def handle_autoclicker_upgrade():
       # Prints a message to inform the player that the upgrade was successful
     print(f"Autoclicker upgraded to level {autoclicker_level}!")
 
-# while loops
+# while loops and game loops
 while running:
   
   screen.fill(BLACK)
@@ -90,6 +98,10 @@ while running:
       if cookie_rect.collidepoint(mouse_x, mouse_y):
         score += multiplier
         scale = 0.20
+        for i in range(10):
+          particle = create_particle()
+          particles.append(particle)
+          
       elif shop_button_rect.collidepoint(mouse_x, mouse_y):
         shop_open = not shop_open
       elif shop_multiplier_button_rect.collidepoint(mouse_x, mouse_y) and shop_open == True:
@@ -98,6 +110,12 @@ while running:
       elif autoclicker_rect.collidepoint(mouse_x, mouse_y) and shop_open == True:
         print("Autoclicker")
   scale += (0.25 - scale) * 0.4
+  for particle in particles:
+    particle['x'] -= particle['vx']
+    particle['y'] += particle['vy']
+    particle['size'] -= 0.5
+    pygame.draw.rect(screen, particle['color'], (particle['x'], particle['y'], particle['size'], particle['size']))
+    particles = [particle for particle in particles if particle['size'] > 0]
   pygame.draw.rect(screen, GREEN, shop_button_rect)
   shop_text = font.render("Shop", True, WHITE)
   shop_text_rect = shop_text.get_rect()
